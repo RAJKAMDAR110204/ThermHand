@@ -4,70 +4,7 @@ A multimodal computer vision and thermal screening system that detects arthritis
 
 ---
 
-## Pipeline Flowchart
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           PHASE 1: CLOUD TRAINING (KAGGLE)                      │
-│                Dataset: podakantisatyajith/thermal-data-collection (71 GB)       │
-└────────────────────────────────────────┬────────────────────────────────────────┘
-                                         │
-                                         ▼
-                     ┌───────────────────────────────────────┐
-                     │ 1. Cell 1: Environment Setup          │
-                     │    !pip install -q mediapipe          │
-                     └───────────────────┬───────────────────┘
-                                         │
-                                         ▼
-                     ┌───────────────────────────────────────┐
-                     │ 2. Cell 2: Multimodal Extraction     │
-                     │    - Thermal-to-Celsius conversion    │
-                     │    - MediaPipe 21-joint RGB tracking  │
-                     │    - Affine registration (M_global)   │
-                     │    - Otsu & hysteresis hand masking   │
-                     │    - Extracts 21 thermal features     │
-                     │    - Saves: features_cache.pkl        │
-                     └───────────────────┬───────────────────┘
-                                         │
-                                         ▼
-                     ┌───────────────────────────────────────┐
-                     │ 3. Cell 3: Anti-Overfitting LOSO      │
-                     │    - 17-fold Leave-One-Subject-Out    │
-                     │    - Ledoit-Wolf covariance shrinkage │
-                     │    - Out-of-fold (OOF) 95% threshold  │
-                     │    - Exports: model_bundle_*.json     │
-                     └───────────────────┬───────────────────┘
-                                         │
-                                         ▼
-                     ┌───────────────────────────────────────┐
-                     │ 4. Cell 4: Package Artifacts          │
-                     │    - Zips outputs into .zip (~400 KB) │
-                     └───────────────────┬───────────────────┘
-                                         │
-                                         │ (Download only ~400 KB, ZERO 71 GB download!)
-                                         ▼
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                           PHASE 2: LOCAL DASHBOARD (PC)                         │
-└────────────────────────────────────────┬────────────────────────────────────────┘
-                                         │
-                                         ▼
-                     ┌───────────────────────────────────────┐
-                     │ 5. Local Setup                        │
-                     │    pip install -r requirements        │
-                     │    streamlit run ui.py                │
-                     └───────────────────┬───────────────────┘
-                                         │
-                    ┌────────────────────┴────────────────────┐
-                    ▼                                         ▼
-   ┌─────────────────────────────────┐       ┌─────────────────────────────────┐
-   │ Option A: Instant Feature Test  │       │ Option B: Video Tracing Test    │
-   │ - Reads features_cache.pkl      │       │ - Uses 1 subject folder (S17)   │
-   │ - Tests S1-S17 in 0.01s         │       │ - Live thermal video playback   │
-   │ - Outputs anomaly distance      │       │ - MediaPipe skeleton overlay    │
-   └─────────────────────────────────┘       └─────────────────────────────────┘
-```
-
----
 
 ## Step-by-Step Instructions
 
@@ -183,7 +120,70 @@ D:\PROJECT OF HOPE\Arthritis\
 ├── pyrightconfig.json              # IDE linter configuration
 └── README.md                       # Operational steps and pipeline documentation
 ```
+## Pipeline Flowchart
 
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           PHASE 1: CLOUD TRAINING (KAGGLE)                      │
+│                Dataset: podakantisatyajith/thermal-data-collection (71 GB)       │
+└────────────────────────────────────────┬────────────────────────────────────────┘
+                                         │
+                                         ▼
+                     ┌───────────────────────────────────────┐
+                     │ 1. Cell 1: Environment Setup          │
+                     │    !pip install -q mediapipe          │
+                     └───────────────────┬───────────────────┘
+                                         │
+                                         ▼
+                     ┌───────────────────────────────────────┐
+                     │ 2. Cell 2: Multimodal Extraction     │
+                     │    - Thermal-to-Celsius conversion    │
+                     │    - MediaPipe 21-joint RGB tracking  │
+                     │    - Affine registration (M_global)   │
+                     │    - Otsu & hysteresis hand masking   │
+                     │    - Extracts 21 thermal features     │
+                     │    - Saves: features_cache.pkl        │
+                     └───────────────────┬───────────────────┘
+                                         │
+                                         ▼
+                     ┌───────────────────────────────────────┐
+                     │ 3. Cell 3: Anti-Overfitting LOSO      │
+                     │    - 17-fold Leave-One-Subject-Out    │
+                     │    - Ledoit-Wolf covariance shrinkage │
+                     │    - Out-of-fold (OOF) 95% threshold  │
+                     │    - Exports: model_bundle_*.json     │
+                     └───────────────────┬───────────────────┘
+                                         │
+                                         ▼
+                     ┌───────────────────────────────────────┐
+                     │ 4. Cell 4: Package Artifacts          │
+                     │    - Zips outputs into .zip (~400 KB) │
+                     └───────────────────┬───────────────────┘
+                                         │
+                                         │ (Download only ~400 KB, ZERO 71 GB download!)
+                                         ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           PHASE 2: LOCAL DASHBOARD (PC)                         │
+└────────────────────────────────────────┬────────────────────────────────────────┘
+                                         │
+                                         ▼
+                     ┌───────────────────────────────────────┐
+                     │ 5. Local Setup                        │
+                     │    pip install -r requirements        │
+                     │    streamlit run ui.py                │
+                     └───────────────────┬───────────────────┘
+                                         │
+                    ┌────────────────────┴────────────────────┐
+                    ▼                                         ▼
+   ┌─────────────────────────────────┐       ┌─────────────────────────────────┐
+   │ Option A: Instant Feature Test  │       │ Option B: Video Tracing Test    │
+   │ - Reads features_cache.pkl      │       │ - Uses 1 subject folder (S17)   │
+   │ - Tests S1-S17 in 0.01s         │       │ - Live thermal video playback   │
+   │ - Outputs anomaly distance      │       │ - MediaPipe skeleton overlay    │
+   └─────────────────────────────────┘       └─────────────────────────────────┘
+```
+
+---
 ---
 
 ## Troubleshooting
